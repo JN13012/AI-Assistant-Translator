@@ -1,9 +1,9 @@
-# [AI-Voice-Assistant]
+# [AI-Assistant-Translator]
 
 My first AI Voice Assistant using **Groq** and **IBM Watson**.
 
 ## Tech Stack
-- **AI Brain:** Groq (Llama 3.3) via LPU for instant responses.
+- **AI Brain:** Groq (Llama 3.3)
 - **Voice (STT/TTS):** IBM Watson Cloud.
 - **Backend:** Flask (Python).
 
