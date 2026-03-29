@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Assistant Translator</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=JetBrains+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <style>
+      :root {
+        --primary: #6366f1;
+        --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        --glass: rgba(255, 255, 255, 0.8);
+        --text-dark: #1e293b;
+        --user-bubble: #475569;
+        --bot-bubble: #6366f1;
+      }
+
+      body.dark-mode {
+        --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        --glass: rgba(30, 41, 59, 0.9);
+        --text-dark: #f8fafc;
+      }
+
+      body {
+        background: var(--bg-gradient);
+        background-attachment: fixed;
+        color: var(--text-dark);
+        font-family: "Plus Jakarta Sans", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        transition: all 0.4s ease;
+      }
+
+      .glass-card {
+        background: var(--glass);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 28px;
+        padding: 35px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        font-weight: 800;
+        background: linear-gradient(to right, #6366f1, #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -1.5px;
+      }
+
+      #chat-window {
+        height: 420px;
+        overflow-y: auto;
+        border-radius: 20px;
+        background: rgba(0, 0, 0, 0.04);
+        margin: 20px 0;
+        padding: 25px;
+        scrollbar-width: none;
+      }
+      #chat-window::-webkit-scrollbar {
+        display: none;
+      }
+
+      .msg-container {
+        margin-bottom: 20px;
+      }
+
+      .msg-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-transform: uppercase;
+        margin-left: 8px;
+        margin-bottom: 4px;
+      }
+
+      .msg-text {
+        padding: 12px 20px;
+        border-radius: 18px;
+        display: inline-block;
+        max-width: 85%;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .user-msg {
+        background: var(--user-bubble);
+        color: #ffffff;
+      }
+      .bot-msg {
+        background: var(--bot-bubble);
+        color: #ffffff;
+      }
+
+      .btn-modern {
+        min-width: 120px;
+        height: 48px;
+        border-radius: 50px;
+        background: var(--primary);
+        border: none;
+        color: white;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      }
+
+      .btn-modern i {
+        font-size: 1.1rem;
+      }
+      .btn-modern:hover {
+        transform: translateY(-2px);
+        background: #4f46e5;
+      }
+
+      .btn-modern.recording {
+        background: #ef4444;
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+      }
+
+      .input-group-modern {
+        background: white;
+        border-radius: 50px;
+        padding: 6px 6px 6px 22px;
+        display: flex;
+        align-items: center;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+      }
+      body.dark-mode .input-group-modern {
+        background: #334155;
+        border: none;
+      }
+
+      #message-input {
+        border: none;
+        background: transparent;
+        outline: none;
+        flex: 1;
+        color: inherit;
+        font-size: 0.95rem;
+      }
+
+      .lang-select {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 4px 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        outline: none;
+        cursor: pointer;
+      }
+
+      .dot {
+        background: var(--primary) !important;
+        width: 8px;
+        height: 8px;
+      }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="../static/script.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+          <div class="glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h1>AI Assistant Translator</h1>
+                <p
+                  class="small m-0 text-muted"
+                  style="font-family: &quot;JetBrains Mono&quot;"
+                >
+                  v2.0
+                </p>
+              </div>
+              <div class="custom-control custom-switch">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  id="light-dark-mode-switch"
+                />
+                <label class="custom-control-label" for="light-dark-mode-switch"
+                  ><i class="fa fa-moon-o"></i
+                ></label>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center mb-2">
+              <span class="small font-weight-bold mr-2 opacity-70"
+                >CIBLE :</span
+              >
+              <select id="target-lang-select" class="lang-select">
+                <option value="English" selected>Anglais</option>
+                <option value="French">Français</option>
+                <option value="Spanish">Espagnol</option>
+                <option value="German">Allemand</option>
+                <option value="Italian">Italien</option>
+                <option value="Portuguese">Portugais</option>
+                <option value="Dutch">Néerlandais</option>
+                <option value="Chinese">Chinois</option>
+                <option value="Japanese">Japonais</option>
+                <option value="Korean">Coréen</option>
+                <option value="Arabic">Arabe</option>
+              </select>
+            </div>
+
+            <div id="chat-window">
+              <div
+                class="text-center mb-4 opacity-50 small"
+                style="
+                  font-family: &quot;JetBrains Mono&quot;;
+                  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+                  padding-bottom: 10px;
+                "
+              >
+                <i class="fa fa-info-circle mr-1"></i> Tapez au
+                clavier ou maintenez RECORD pour parler.
+              </div>
+
+              <div id="message-list"></div>
+
+              <div class="my-loading d-none text-center mt-3">
+                <div class="loading-dots d-inline-block">
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="input-group-modern">
+              <input
+                type="text"
+                id="message-input"
+                placeholder="Saisissez votre texte..."
+                autocomplete="off"
+              />
+              <button id="send-button" class="btn-modern">
+                <i class="fa fa-microphone mr-2"></i> RECORD
+              </button>
+            </div>
+          </div>
+          <p class="text-center mt-4 small opacity-50">
+            Powered by Llama-3.3 & IBM Watson Services
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $("#light-dark-mode-switch").on("change", function () {
+        $("body").toggleClass("dark-mode");
+      });
+    </script>
+  </body>
+</html>
